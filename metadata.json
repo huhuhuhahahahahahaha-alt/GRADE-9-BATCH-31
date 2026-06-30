@@ -1,0 +1,8 @@
+{
+  "name": "Grade 9 Classroom Hub",
+  "description": "Secure school platform for Grade 9 section chatrooms, real-time materials orders, attendance tracking, and gradebooks.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

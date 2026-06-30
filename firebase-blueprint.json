@@ -1,0 +1,108 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account for a student or teacher",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique user ID" },
+        "name": { "type": "string", "description": "Full name of the user" },
+        "email": { "type": "string", "description": "School email address" },
+        "role": { "type": "string", "enum": ["student", "teacher"], "description": "User role" },
+        "section": { "type": "string", "enum": ["fullerene", "diamond", "graphite", "lonsdalite", "none"], "description": "Grade 9 section for students or 'none' for teachers" },
+        "approved": { "type": "boolean", "description": "Whether the account is approved by a teacher" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when account was registered" }
+      },
+      "required": ["uid", "name", "email", "role", "section", "approved", "createdAt"]
+    },
+    "Request": {
+      "title": "Request",
+      "description": "A notification/material request sent by a teacher (checkout cart model)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "teacherId": { "type": "string" },
+        "teacherName": { "type": "string" },
+        "section": { "type": "string", "enum": ["fullerene", "diamond", "graphite", "lonsdalite"] },
+        "items": { "type": "object", "description": "Map of items to count, e.g., {'1/4 sheet of paper': 1}" },
+        "message": { "type": "string", "description": "Short custom message accompanying the notification" },
+        "scheduledFor": { "type": "string", "format": "date-time", "description": "Date and time to show the alert (null for instant)" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "active": { "type": "boolean", "description": "Whether the alert is active or future-scheduled" }
+      },
+      "required": ["id", "teacherId", "teacherName", "section", "items", "message", "createdAt", "active"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Real-time message in a subject chatroom or between student and teacher",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "chatId": { "type": "string", "description": "Format: 'section_subject' (e.g. fullerene_Science) or 'pm_studentId_teacherId'" },
+        "type": { "type": "string", "enum": ["subject", "pm"] },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderRole": { "type": "string", "enum": ["student", "teacher"] },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "chatId", "type", "senderId", "senderName", "senderRole", "content", "createdAt"]
+    },
+    "Grade": {
+      "title": "Grade",
+      "description": "Student subject grades and feedback managed by teachers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Format: 'studentId_subject'" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "section": { "type": "string", "enum": ["fullerene", "diamond", "graphite", "lonsdalite"] },
+        "subject": { "type": "string" },
+        "grades": { "type": "array", "description": "List of score items with title, score, maxScore" },
+        "feedback": { "type": "string" },
+        "behaviourNotes": { "type": "string" },
+        "updatedBy": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "studentId", "studentName", "section", "subject", "grades", "feedback", "behaviourNotes", "updatedBy", "updatedAt"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Daily attendance record for a section and subject",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Format: 'section_subject_date'" },
+        "section": { "type": "string", "enum": ["fullerene", "diamond", "graphite", "lonsdalite"] },
+        "subject": { "type": "string" },
+        "date": { "type": "string", "description": "YYYY-MM-DD" },
+        "records": { "type": "object", "description": "Map of studentId -> status ('present' | 'absent' | 'late')" },
+        "notes": { "type": "string" },
+        "updatedBy": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "section", "subject", "date", "records", "notes", "updatedBy", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile metadata"
+    },
+    "/requests/{requestId}": {
+      "schema": "Request",
+      "description": "Material alert requests from teachers"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Real-time subject and private messages"
+    },
+    "/grades/{gradeId}": {
+      "schema": "Grade",
+      "description": "Academic records and feedback"
+    },
+    "/attendance/{attendanceId}": {
+      "schema": "Attendance",
+      "description": "Daily attendance logging"
+    }
+  }
+}
